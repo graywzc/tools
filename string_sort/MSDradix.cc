@@ -7,6 +7,8 @@ using namespace std;
 class MSDradix
 {
 public:
+    MSDradix():th(100){}
+    MSDradix(int threshold):th(threshold){}
     void sort(vector<string>& a)
     {
         if(a.empty()) return;
@@ -17,8 +19,17 @@ public:
     void sort(vector<string>& a, vector<string>& aux, int start, int end, int d)
     {
         if(start>=end) return;          
-        int R = 257;
 
+        // stwich to insertion sort if the size is too small 
+        if((end-start+1)<th)
+        {
+            for(int i = start; i <end; i++) 
+                for(int j = i+1; j>start && (a[j].substr(d)<a[j-1].substr(d)); j--)
+                    swap(a[j],a[j-1]);
+            return; 
+        }
+        
+        int R = 257;
         vector<int> count(R+1);
         for(int i = start; i <= end; i++)
             count[(d==a[i].size())?1:(a[i][d]+2)]++; 
@@ -31,6 +42,8 @@ public:
         for(int i = 0; i < R-1; i++)
             sort(a,aux,start+count[i],start+count[i+1]-1,d+1);
     }
+private:
+    int th;
 };
 
 int main()
